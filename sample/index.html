@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>eventSwitch.js test sample</title>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+      font-size: 14px;
+    }
+    body{
+      padding: 15px;
+    }
+    .buttonLayout{
+      display: flex;
+      margin-bottom: 50px;
+    }
+    .button{
+      width: 200px;
+      background-color: #dddddd;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 3px;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      color: #ffffff;
+      font-weight: bold;
+    }
+    .button + .button{
+      margin-left: 15px;
+    }
+    .button--blue{
+      background-color: #39467f;
+    }
+    .button--red{
+      background-color: #e14545;
+    }
+    .button--green{
+      background-color: #72c452;
+    }
+    h1{
+      font-size: 22px;
+      margin-bottom: 15px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+  <div class="buttonLayout">
+    <div class="js_clickTarget button button--blue">click event target</div>
+    <div href="" class="js_eventRemover button button--red">remove click event</div>
+    <div href="" class="js_eventRestorer button button--green">restore click event</div>
+  </div>
+  <h1>Event log</h1>
+  <div class="log"></div>
+    <script src="../dist/eventSwitch.min.js"></script>
+    <script>
+      var zeroPadding = function(val) {
+        return ('00'+ val).slice(-2);
+      }
+      var log = {
+        text:[],
+        element:document.querySelector('.log')
+      }
+      log.register = function(text){
+        log.element.innerHTML = '';
+        var date = new Date();
+        var time = '['+zeroPadding(date.getHours()) +":"+ zeroPadding(date.getMinutes()) +":"+ zeroPadding(date.getSeconds()) +"]";
+        log.text.push(time+text)
+        log.text = log.text.slice(-10);
+        log.text.forEach(function(element){
+          var dom = document.createElement('div');
+          dom.innerHTML = element
+          log.element.appendChild(dom);
+        })
+      }
+
+      //sample eventSwitch.js
+      var clickEvent = esw('.js_clickTarget','click',function(event){
+        log.register(' click event alive!');
+      });
+
+      var eventRemover = esw('.js_eventRemover','click',function(event){
+        if(clickEvent.isActive){
+          clickEvent.switch('off');
+          log.register(' destoroy click event')
+        }else{
+          log.register('【error】click event has already been destroyed')
+        }
+      });
+
+      var eventRestorer = esw('.js_eventRestorer','click',function(event){
+        if(!clickEvent.isActive){
+          clickEvent.switch('on');
+          log.register(' restore click event')
+        }else{
+          log.register('【error】click event still alive')
+        }
+      });
+    </script>    
+</body>
+</html>

@@ -16,20 +16,20 @@
     this.isActive = true;
     this.switch('on');
   }
-  EventSwitch.prototype.switch = function(type){
+  EventSwitch.prototype.switch = function(order){
     var _this = this;
     var option = _this.option;
-    _this.isActive = type === 'on' ? true : false ;
+    var listenerType = order === 'on' ? 'addEventListener' : 'removeEventListener' ;
+    _this.isActive = order === 'on' ? true : false ;
     if(_this.option.isArray){
-      option = type === 'on' ? _this.option[0] : _this.option[1] ;
+      option = order === 'on' ? _this.option[0] : _this.option[1] ;
     }
-    type = type === 'on' ? 'addEventListener' : 'removeEventListener' ;
     if(typeof _this.target === 'string'){
       Array.prototype.slice.call(document.querySelectorAll(_this.target)).forEach(function(element){
-        element[type](_this.type, _this.listener, option);
+        element[listenerType](_this.type, _this.listener, option);
       });
     }else{
-      _this.target[type](_this.type, _this.listener, option);
+      _this.target[listenerType](_this.type, _this.listener, option);
     }
   }
   return function(target, type, listener, option){
